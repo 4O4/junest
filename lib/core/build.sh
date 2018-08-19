@@ -77,8 +77,8 @@ function build_image_env(){
     sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c \
         "pacman-key --init; pacman-key --populate archlinux; [ -e /etc/pacman.d/gnupg/S.gpg-agent ] && gpg-connect-agent -S /etc/pacman.d/gnupg/S.gpg-agent killagent /bye"
 
-    sudo rm ${maindir}/root/var/cache/pacman/pkg/*
-
+    info "Installing aurman"
+    JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f 'git clone https://github.com/polygamma/aurman.git --depth=1 && cd aurman && makepkg -si --noconfirm --skippgpcheck'
 
     if [[ ! -z "$2" ]]; then
         info "Installing additional packages..."        
@@ -90,13 +90,15 @@ function build_image_env(){
         for pkg in "$@"
         do
             if [[ "${pkg}" == aur:* ]]; then
-                :
+                JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}"
             else
-                sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
-                JUNEST_HOME="${maindir}/root_test" ${maindir}/root_test/opt/${CMD}/bin/${CMD} -f pacman --noconfirm -S "${pkg}"
+                # sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
+                JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f pacman --noconfirm -Sy "${pkg}"
             fi
         done
     fi
+    
+    sudo rm ${maindir}/root/var/cache/pacman/pkg/*
 
     mkdir -p ${maindir}/output
     builtin cd ${maindir}/output
