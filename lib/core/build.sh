@@ -88,7 +88,7 @@ function build_image_env(){
         for pkg in "$@"
         do
             if [[ "${pkg}" == aur:* ]]; then
-                _install_from_aur_with_deps ${maindir} "${pkg:4}"
+                _install_from_aur_with_deps ${maindir} "${pkg:4}" || echo "FFS DONT BREAK MY BUILD"
                 #sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
         #"yogurt --noconfirm -S ${pkg:4} || echo 'Ooops! Package installation failed (${pkg})'"
                 #JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}" || echo "Ooops! Package installation failed (${pkg})"
