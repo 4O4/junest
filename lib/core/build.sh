@@ -42,7 +42,8 @@ function build_image_env(){
     local maindir=$(TMPDIR=$JUNEST_TEMPDIR mktemp -d -t ${CMD}.XXXXXXXXXX)
     sudo mkdir -p ${maindir}/root
     trap - QUIT EXIT ABRT KILL TERM INT
-    trap "sudo rm -rf ${maindir}; die \"Error occurred when installing ${NAME}\"" EXIT QUIT ABRT KILL TERM INT
+    # fucking self-destructing traps everywhere OMG
+    trap "echo sudo rm -rf ${maindir}; die \"Error occurred when installing ${NAME}\"" EXIT QUIT ABRT KILL TERM INT
     info "Installing pacman and its dependencies..."
     # The archlinux-keyring and libunistring are due to missing dependencies declaration in ARM archlinux
     # All the essential executables (ln, mkdir, chown, etc) are in coreutils
@@ -90,12 +91,12 @@ function build_image_env(){
         for pkg in "$@"
         do
             if [[ "${pkg}" == aur:* ]]; then
-                sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c \
+                sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
         "yogurt --noconfirm -S ${pkg:4} || echo 'Ooops! Package installation failed (${pkg})'"
                 #JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}" || echo "Ooops! Package installation failed (${pkg})"
             else
                 # sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
-                sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c \
+                sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
         "pacman --noconfirm -Sy ${pkg} || echo 'Ooops! Package installation failed (${pkg})'"
             fi
         done
@@ -121,5 +122,5 @@ function build_image_env(){
 
     builtin cd ${ORIGIN_WD}
     trap - QUIT EXIT ABRT KILL TERM INT
-    sudo rm -fr "$maindir"
+    echo sudo rm -fr "$maindir"
 }
