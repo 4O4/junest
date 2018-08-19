@@ -23,7 +23,7 @@ function _install_from_aur(){
     builtin cd ${maindir}/packages/${pkgname}
     $CURL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=${pkgname}"
     [ -z "${installname}" ] || $CURL "https://aur.archlinux.org/cgit/aur.git/plain/${installname}?h=${pkgname}"
-    makepkg -sfcd --skippgpcheck
+    makepkg -sfc --skippgpcheck
     sudo pacman --noconfirm --root ${maindir}/root -U ${pkgname}*.pkg.tar.xz
 }
 
