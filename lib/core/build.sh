@@ -65,6 +65,31 @@ function build_image_env(){
     _install_from_aur ${maindir} "${CMD}-git" "${CMD}.install"
     #sudo pacman --noconfirm --root ${maindir}/root -Rsn git
     
+    if [[ ! -z "$2" ]]; then
+        info "Installing additional packages..."        
+        echo "$@"
+        shift
+        
+        echo "$@"
+        sudo pacman --noconfirm --root ${maindir}/root -Syy || echo "fuck you"
+        #sudo ${maindir}/root/opt/junest/bin/groot ${maindir}/root pacman --noconfirm -Syy || echo "FAIL"
+        #sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c "pacman --noconfirm -Syy"
+        
+        for pkg in "$@"
+        do
+            if [[ "${pkg}" == aur:* ]]; then
+                :
+                #sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
+        #"yogurt --noconfirm -S ${pkg:4} || echo 'Ooops! Package installation failed (${pkg})'"
+                #JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}" || echo "Ooops! Package installation failed (${pkg})"
+            else
+                # sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
+                #sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
+        #"pacman --noconfirm -Sy ${pkg} || echo 'Ooops! Package installation failed (${pkg})'"
+                sudo pacman --noconfirm --root ${maindir}/root -Sy ${pkg} || echo "fuck you 2"
+            fi
+        done
+    fi
 
     info "Generating the locales..."
     # sed command is required for locale-gen
@@ -80,28 +105,6 @@ function build_image_env(){
     #info "Installing aurman"
     #(JUNEST_HOME="${maindir}/root" sudo -E ${maindir}/root/opt/${CMD}/bin/${CMD} -g 'git clone https://github.com/polygamma/aurman.git --depth=1 && cd aurman && sudo makepkg -si --noconfirm --skippgpcheck') || echo "Ooops! Unable to install aurman!"
 
-    if [[ ! -z "$2" ]]; then
-        info "Installing additional packages..."        
-        echo "$@"
-        shift
-        
-        echo "$@"
-        sudo ${maindir}/root/opt/junest/bin/groot ${maindir}/root pacman --noconfirm -Syy || echo "FAIL"
-        sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c "pacman --noconfirm -Syy"
-        
-        for pkg in "$@"
-        do
-            if [[ "${pkg}" == aur:* ]]; then
-                sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
-        "yogurt --noconfirm -S ${pkg:4} || echo 'Ooops! Package installation failed (${pkg})'"
-                #JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}" || echo "Ooops! Package installation failed (${pkg})"
-            else
-                # sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
-                sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
-        "pacman --noconfirm -Sy ${pkg} || echo 'Ooops! Package installation failed (${pkg})'"
-            fi
-        done
-    fi
     
     sudo rm ${maindir}/root/var/cache/pacman/pkg/*
 
