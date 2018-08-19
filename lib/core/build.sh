@@ -49,7 +49,7 @@ function build_image_env(){
     # yaourt requires sed
     # localedef (called by locale-gen) requires gzip
     # unshare command belongs to util-linux
-    sudo pacstrap -G -M -d ${maindir}/root pacman coreutils libunistring archlinux-keyring sed gzip util-linux
+    sudo pacstrap -G -M -d ${maindir}/root pacman coreutils libunistring archlinux-keyring sed gzip util-linux git
     sudo bash -c "echo 'Server = $DEFAULT_MIRROR' >> ${maindir}/root/etc/pacman.d/mirrorlist"
     sudo mkdir -p ${maindir}/root/run/lock
 
@@ -60,13 +60,16 @@ function build_image_env(){
     _install_from_aur ${maindir} "sudo-fake"
 
     info "Install ${NAME} script..."
-    sudo pacman --noconfirm --root ${maindir}/root -S git
+    #sudo pacman --noconfirm --root ${maindir}/root -S git
     _install_from_aur ${maindir} "${CMD}-git" "${CMD}.install"
-    sudo pacman --noconfirm --root ${maindir}/root -Rsn git
+    #sudo pacman --noconfirm --root ${maindir}/root -Rsn git
     
     if [[ ! -z "$2" ]]; then
-        info "Installing additional packages..."
+        info "Installing additional packages..."        
+        echo "$@"
         shift
+        
+        echo "$@"
         
         for pkg in "$@"
         do
