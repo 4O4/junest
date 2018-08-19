@@ -49,7 +49,7 @@ function build_image_env(){
     # yaourt requires sed
     # localedef (called by locale-gen) requires gzip
     # unshare command belongs to util-linux
-    sudo pacstrap -G -M -d ${maindir}/root pacman coreutils libunistring archlinux-keyring sed gzip util-linux git python3
+    sudo pacstrap -G -M -d ${maindir}/root pacman coreutils libunistring archlinux-keyring sed gzip util-linux git
     sudo bash -c "echo 'Server = $DEFAULT_MIRROR' >> ${maindir}/root/etc/pacman.d/mirrorlist"
     sudo mkdir -p ${maindir}/root/run/lock
 
@@ -76,8 +76,8 @@ function build_image_env(){
     sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c \
         "pacman-key --init; pacman-key --populate archlinux; [ -e /etc/pacman.d/gnupg/S.gpg-agent ] && gpg-connect-agent -S /etc/pacman.d/gnupg/S.gpg-agent killagent /bye"
 
-    info "Installing aurman"
-    (JUNEST_HOME="${maindir}/root" sudo -E ${maindir}/root/opt/${CMD}/bin/${CMD} -g 'git clone https://github.com/polygamma/aurman.git --depth=1 && cd aurman && sudo makepkg -si --noconfirm --skippgpcheck') || echo "Ooops! Unable to install aurman!"
+    #info "Installing aurman"
+    #(JUNEST_HOME="${maindir}/root" sudo -E ${maindir}/root/opt/${CMD}/bin/${CMD} -g 'git clone https://github.com/polygamma/aurman.git --depth=1 && cd aurman && sudo makepkg -si --noconfirm --skippgpcheck') || echo "Ooops! Unable to install aurman!"
 
     if [[ ! -z "$2" ]]; then
         info "Installing additional packages..."        
