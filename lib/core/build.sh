@@ -27,6 +27,16 @@ function _install_from_aur(){
     sudo pacman --noconfirm --root ${maindir}/root -U ${pkgname}*.pkg.tar.xz
 }
 
+function _install_from_aur_with_deps(){
+    local maindir=$1
+    local pkgname=$2
+    mkdir -p ${maindir}/packages/${pkgname}
+    builtin cd ${maindir}/packages/${pkgname}
+    $CURL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=${pkgname}"
+    makepkg -sfc --skippgpcheck
+    sudo pacman --noconfirm --root ${maindir}/root -U ${pkgname}*.pkg.tar.xz
+}
+
 function build_image_env(){
     umask 022
 
@@ -78,7 +88,7 @@ function build_image_env(){
         for pkg in "$@"
         do
             if [[ "${pkg}" == aur:* ]]; then
-                :
+                _install_from_aur_with_deps ${maindir} "${pkg:4}"
                 #sudo ${maindir}/root/opt/junest/bin/groot bash -x -c \
         #"yogurt --noconfirm -S ${pkg:4} || echo 'Ooops! Package installation failed (${pkg})'"
                 #JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}" || echo "Ooops! Package installation failed (${pkg})"
@@ -100,7 +110,7 @@ function build_image_env(){
 
     info "Setting up the pacman keyring (this might take a while!)..."
     sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c \
-        "pacman-key --init; pacman-key --populate archlinux; [ -e /etc/pacman.d/gnupg/S.gpg-agent ] && gpg-connect-agent -S /etc/pacman.d/gnupg/S.gpg-agent killagent /bye"
+        "pacman-key --init; pacman-key --populate archlinux; [ -e /etc/pacman.d/gnupg/S.gpg-agent ] && gpg-connect-agent -S /etc/pacman.d/gnupg/S.gpg-agent killagent /bye" || echo "I don't care about these bullshit errors"
 
     #info "Installing aurman"
     #(JUNEST_HOME="${maindir}/root" sudo -E ${maindir}/root/opt/${CMD}/bin/${CMD} -g 'git clone https://github.com/polygamma/aurman.git --depth=1 && cd aurman && sudo makepkg -si --noconfirm --skippgpcheck') || echo "Ooops! Unable to install aurman!"
