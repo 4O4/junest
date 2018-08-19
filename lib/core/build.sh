@@ -105,7 +105,7 @@ function build_image_env(){
         JUNEST_HOME="${maindir}/root_test" sudo -E ${maindir}/root_test/opt/${CMD}/bin/${CMD} -g ${JUNEST_BASE}/lib/checks/check.sh --run-root-tests
     fi
 
-    sudo cp ${maindir}/output/${imagefile} ${ORIGIN_WD}
+    sudo cp ${maindir}/output/${imagefile} ${ORIGIN_WD}/..
 
     builtin cd ${ORIGIN_WD}
     trap - QUIT EXIT ABRT KILL TERM INT
