@@ -77,7 +77,7 @@ function build_image_env(){
         "pacman-key --init; pacman-key --populate archlinux; [ -e /etc/pacman.d/gnupg/S.gpg-agent ] && gpg-connect-agent -S /etc/pacman.d/gnupg/S.gpg-agent killagent /bye"
 
     info "Installing aurman"
-    JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f 'git clone https://github.com/polygamma/aurman.git --depth=1 && cd aurman && makepkg -si --noconfirm --skippgpcheck'
+    (JUNEST_HOME="${maindir}/root" sudo -E ${maindir}/root/opt/${CMD}/bin/${CMD} -g 'git clone https://github.com/polygamma/aurman.git --depth=1 && cd aurman && sudo makepkg -si --noconfirm --skippgpcheck') || echo "Ooops! Unable to install aurman!"
 
     if [[ ! -z "$2" ]]; then
         info "Installing additional packages..."        
