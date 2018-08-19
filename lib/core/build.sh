@@ -90,10 +90,10 @@ function build_image_env(){
         for pkg in "$@"
         do
             if [[ "${pkg}" == aur:* ]]; then
-                JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}"
+                JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f yogurt --noconfirm -S "${pkg:4}" || echo "Ooops! Package installation failed (${pkg})
             else
                 # sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
-                JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f pacman --noconfirm -Sy "${pkg}"
+                JUNEST_HOME="${maindir}/root" ${maindir}/root/opt/${CMD}/bin/${CMD} -f pacman --noconfirm -Sy "${pkg}" || echo "Ooops! Package installation failed (${pkg})
             fi
         done
     fi
