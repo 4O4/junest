@@ -85,6 +85,7 @@ function build_image_env(){
         shift
         
         echo "$@"
+        sudo ${maindir}/root/opt/junest/bin/groot -b /dev ${maindir}/root bash -x -c "pacman --noconfirm -Syy"
         
         for pkg in "$@"
         do
