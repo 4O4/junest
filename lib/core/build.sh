@@ -58,7 +58,6 @@ function build_image_env(){
     _install_from_aur ${maindir} "package-query"
     _install_from_aur ${maindir} "yaourt"
     _install_from_aur ${maindir} "sudo-fake"
-    _install_from_aur ${maindir} "aurman"
 
     info "Install ${NAME} script..."
     #sudo pacman --noconfirm --root ${maindir}/root -S git
