@@ -63,6 +63,20 @@ function build_image_env(){
     sudo pacman --noconfirm --root ${maindir}/root -S git
     _install_from_aur ${maindir} "${CMD}-git" "${CMD}.install"
     sudo pacman --noconfirm --root ${maindir}/root -Rsn git
+    
+    if [[ ! -z "$2" ]]; then
+        info "Installing additional packages..."
+        shift
+        
+        for pkg in "$@"
+        do
+            if [[ "${pkg}" == aur:* ]]; then
+                _install_from_aur ${maindir} "${pkg:4}"
+            else
+                sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
+            fi
+        done
+    fi
 
     info "Generating the locales..."
     # sed command is required for locale-gen
