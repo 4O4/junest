@@ -112,8 +112,8 @@ check_cli(){
     fi
     if [ "$ARGS" != "" ]
     then
-        if $OPT_HELP || $OPT_SETUP_FROM_FILE || \
-            $OPT_VERSION || $OPT_DISABLE_VALIDATION
+        if $OPT_DELETE || $OPT_HELP || $OPT_SETUP_FROM_FILE || \
+            $OPT_VERSION
         then
             die "No arguments are needed. For the CLI syntax run: $CMD --help"
         fi
