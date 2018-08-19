@@ -33,7 +33,7 @@ function _install_from_aur_with_deps(){
     mkdir -p ${maindir}/packages/${pkgname}
     builtin cd ${maindir}/packages/${pkgname}
     $CURL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=${pkgname}"
-    makepkg -sfc --skippgpcheck
+    makepkg -sfc --skippgpcheck --noconfirm #omg
     sudo pacman --noconfirm --root ${maindir}/root -U ${pkgname}*.pkg.tar.xz
 }
 
