@@ -23,7 +23,7 @@ function _install_from_aur(){
     builtin cd ${maindir}/packages/${pkgname}
     $CURL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=${pkgname}"
     [ -z "${installname}" ] || $CURL "https://aur.archlinux.org/cgit/aur.git/plain/${installname}?h=${pkgname}"
-    makepkg -sfc --skippgpcheck
+    makepkg -sfcd --skippgpcheck
     sudo pacman --noconfirm --root ${maindir}/root -U ${pkgname}*.pkg.tar.xz
 }
 
@@ -49,7 +49,7 @@ function build_image_env(){
     # yaourt requires sed
     # localedef (called by locale-gen) requires gzip
     # unshare command belongs to util-linux
-    sudo pacstrap -G -M -d ${maindir}/root pacman coreutils libunistring archlinux-keyring sed gzip util-linux git
+    sudo pacstrap -G -M -d ${maindir}/root pacman coreutils libunistring archlinux-keyring sed gzip util-linux git python3
     sudo bash -c "echo 'Server = $DEFAULT_MIRROR' >> ${maindir}/root/etc/pacman.d/mirrorlist"
     sudo mkdir -p ${maindir}/root/run/lock
 
@@ -58,28 +58,13 @@ function build_image_env(){
     _install_from_aur ${maindir} "package-query"
     _install_from_aur ${maindir} "yaourt"
     _install_from_aur ${maindir} "sudo-fake"
+    _install_from_aur ${maindir} "aurman"
 
     info "Install ${NAME} script..."
     #sudo pacman --noconfirm --root ${maindir}/root -S git
     _install_from_aur ${maindir} "${CMD}-git" "${CMD}.install"
     #sudo pacman --noconfirm --root ${maindir}/root -Rsn git
     
-    if [[ ! -z "$2" ]]; then
-        info "Installing additional packages..."        
-        echo "$@"
-        shift
-        
-        echo "$@"
-        
-        for pkg in "$@"
-        do
-            if [[ "${pkg}" == aur:* ]]; then
-                _install_from_aur ${maindir} "${pkg:4}"
-            else
-                sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
-            fi
-        done
-    fi
 
     info "Generating the locales..."
     # sed command is required for locale-gen
@@ -93,6 +78,25 @@ function build_image_env(){
         "pacman-key --init; pacman-key --populate archlinux; [ -e /etc/pacman.d/gnupg/S.gpg-agent ] && gpg-connect-agent -S /etc/pacman.d/gnupg/S.gpg-agent killagent /bye"
 
     sudo rm ${maindir}/root/var/cache/pacman/pkg/*
+
+
+    if [[ ! -z "$2" ]]; then
+        info "Installing additional packages..."        
+        echo "$@"
+        shift
+        
+        echo "$@"
+        
+        for pkg in "$@"
+        do
+            if [[ "${pkg}" == aur:* ]]; then
+                :
+            else
+                sudo pacman --noconfirm --root ${maindir}/root -S "${pkg}"
+                JUNEST_HOME="${maindir}/root_test" ${maindir}/root_test/opt/${CMD}/bin/${CMD} -f pacman --noconfirm -S "${pkg}"
+            fi
+        done
+    fi
 
     mkdir -p ${maindir}/output
     builtin cd ${maindir}/output
