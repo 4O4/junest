@@ -120,17 +120,18 @@ function build_image_env(){
 
     mkdir -p ${maindir}/output
     builtin cd ${maindir}/output
-    local imagefile="${CMD}-${ARCH}.tar.gz"
+    local imagefile="${CMD}-${ARCH}.zip"
     info "Compressing image to ${imagefile}..."
-    sudo $TAR -zcpf ${imagefile} -C ${maindir}/root .
+    #sudo $TAR -zcpf ${imagefile} -C ${maindir}/root .
+    sudo zip -ry ${imagefile} .
 
-    if ! $disable_validation
-    then
-        mkdir -p ${maindir}/root_test
-        $TAR -zxpf ${imagefile} -C "${maindir}/root_test"
-        JUNEST_HOME="${maindir}/root_test" ${maindir}/root_test/opt/${CMD}/bin/${CMD} -f ${JUNEST_BASE}/lib/checks/check.sh
-        JUNEST_HOME="${maindir}/root_test" sudo -E ${maindir}/root_test/opt/${CMD}/bin/${CMD} -g ${JUNEST_BASE}/lib/checks/check.sh --run-root-tests
-    fi
+    #if ! $disable_validation
+    #then
+    #    mkdir -p ${maindir}/root_test
+    #    $TAR -zxpf ${imagefile} -C "${maindir}/root_test"   
+    #    JUNEST_HOME="${maindir}/root_test" ${maindir}/root_test/opt/${CMD}/bin/${CMD} -f ${JUNEST_BASE}/lib/checks/check.sh
+    #    JUNEST_HOME="${maindir}/root_test" sudo -E ${maindir}/root_test/opt/${CMD}/bin/${CMD} -g ${JUNEST_BASE}/lib/checks/check.sh --run-root-tests
+    #fi
 
     sudo cp ${maindir}/output/${imagefile} ${ORIGIN_WD}/..
 
