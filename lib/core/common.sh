@@ -50,7 +50,11 @@ else
 fi
 
 MAIN_REPO=https://s3-eu-west-1.amazonaws.com/${CMD}-repo
-ENV_REPO=${MAIN_REPO}/${CMD}
+#ENV_REPO=${MAIN_REPO}/${CMD}
+# https://blog.markvincze.com/download-artifacts-from-a-latest-github-release-in-sh-and-powershell/
+LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/4O4/my-junest/releases/latest)
+LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+ENV_REPO=https://github.com/4O4/my-junest/releases/download/$LATEST_VERSION/
 DEFAULT_MIRROR='https://mirrors.kernel.org/archlinux/$repo/os/$arch'
 
 ORIGIN_WD=$(pwd)
