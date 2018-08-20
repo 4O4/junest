@@ -51,7 +51,14 @@ function _setup_env(){
     is_env_installed && die "Error: ${NAME} has been already installed in $JUNEST_HOME"
 
     mkdir_cmd -p "${JUNEST_HOME}"
-    $TAR -zxpf ${imagepath} -C ${JUNEST_HOME}
+    
+    if [[ "${imagepath}" = *.zip ]]
+    then
+        unzip ${imagepath} -d ${JUNEST_HOME}
+    else
+        $TAR -zxpf ${imagepath} -C ${JUNEST_HOME}
+    fi
+    
     info "The default mirror URL is ${DEFAULT_MIRROR}."
     info "Remember to refresh the package databases from the server:"
     info "    pacman -Syy"
