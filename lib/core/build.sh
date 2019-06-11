@@ -120,10 +120,9 @@ function build_image_env(){
 
     mkdir -p ${maindir}/output
     builtin cd ${maindir}/output
-    local imagefile="${CMD}-${ARCH}.zip"
+    local imagefile="${CMD}-${ARCH}.tar.gz"
     info "Compressing image to ${imagefile}..."
     sudo $TAR -zcpf ${imagefile} -C ${maindir}/root .
-    sudo zip -ry ${imagefile} ${maindir}/root
 
     #if ! $disable_validation
     #then
